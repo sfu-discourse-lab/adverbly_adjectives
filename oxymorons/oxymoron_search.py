@@ -27,7 +27,7 @@ from nltk.corpus.reader.wordnet import WordNetError
 
 coca_file = '~/sfuvault/Discourse-Lab/Data/Adverbly_adjectives/COCA/all_years/all_years.csv'
 core_file = '~/sfuvault/Discourse-Lab/Data/Adverbly_adjectives/CORE/data/CORE_allgenres.xlsx'
-time_file = ''
+time_file = '~/sfuvault/Discourse-Lab/Data/Adverbly_adjectives/TIME/time_all.csv'
 
 VAD_dict_file = '~/Documents/University/Semester6/USRA/NRC-VAD-Lexicon-Aug2018Release/OneFilePerDimension/v-scores.txt'
 VAD_dict = pd.read_table(VAD_dict_file, header=None, names=['VAD_word', 'VAD_valence'])
@@ -88,6 +88,9 @@ def calculateSWNPolarity(term, pos, how):
         for i in range(len(pos)):
             pos_harmonic += pos[i]*(0.5**i)
             neg_harmonic += neg[i]*(0.5**i)
+            
+    # pos_harmonic /= len(pos)
+    # neg_harmonic /= len(neg)
 
     # Absolute maximum of the scores, assigning a negative to indicate negativity
     return pos_harmonic if pos_harmonic >= neg_harmonic else -neg_harmonic
@@ -183,6 +186,21 @@ core_SWN[core_SWN['diff'] > core_SWN['diff'].quantile()].to_csv('geometric_core_
 
 # TIME
 
+time_raw = pd.read_csv(time_file, header=None, names=['0','pair','total'], skiprows=2)
+split = time_raw['pair'].str.split(n=1, expand=True)
+time_raw['adv'] = split[0].str.lower()
+time_raw['adj'] = split[1].str.lower()
+
 # TIME-VAD
+time_VAD = oxymoronsByVAD(time_raw, 'adv', 'adv')
+time_VAD.to_csv('time_VAD_full.csv')
+time_VAD[time_VAD['diff'] > time_VAD['diff'].quantile()].to_csv('time_VAD_50percentile.csv')
 
 # TIME-SWN
+time_SWN = oxymoronsBySWN(time_raw, 'adv', 'adj', 'harmonic')
+time_SWN.to_csv('harmonic_time_SWN_full.csv')
+time_SWN[time_SWN['diff'] > time_SWN['diff'].quantile()].to_csv('harmonic_time_SWN_50percentile.csv')
+
+time_SWN = oxymoronsBySWN(time_raw, 'adv', 'adj', 'geometric')
+time_SWN.to_csv('geometric_time_SWN_full.csv')
+time_SWN[time_SWN['diff'] > time_SWN['diff'].quantile()].to_csv('geometric_time_SWN_50percentile.csv')
