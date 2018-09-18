@@ -10,6 +10,8 @@ columns) as input.
 @author Vasundhara Gautam
 """
 
+# Imports and pre-processing
+
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,9 +21,6 @@ from itertools import chain
 from nltk.corpus import sentiwordnet as swn
 from nltk.corpus import wordnet as wn
 from nltk.corpus.reader.wordnet import WordNetError
-
-
-# Imports and pre-processing
 
 # You will likely need to replace the file paths for COCA, CORE and TIME data, as well as the VAD dict
 
@@ -89,8 +88,8 @@ def calculateSWNPolarity(term, pos, how):
             pos_harmonic += pos[i]*(0.5**i)
             neg_harmonic += neg[i]*(0.5**i)
             
-    # pos_harmonic /= len(pos)
-    # neg_harmonic /= len(neg)
+    pos_harmonic /= len(pos)
+    neg_harmonic /= len(neg)
 
     # Absolute maximum of the scores, assigning a negative to indicate negativity
     return pos_harmonic if pos_harmonic >= neg_harmonic else -neg_harmonic
@@ -155,12 +154,8 @@ coca_VAD[coca_VAD['diff'] > coca_VAD['diff'].quantile()].to_csv('coca_VAD_50perc
 
 # COCA-SWN
 coca_SWN = oxymoronsBySWN(coca_raw, 'Adv', 'Adj', 'harmonic')
-coca_SWN.to_csv('harmonic_coca_SWN_full.csv')
-coca_SWN[coca_SWN['diff'] > coca_SWN['diff'].quantile()].to_csv('harmonic_coca_SWN_50percentile.csv')
-
-coca_SWN = oxymoronsBySWN(coca_raw, 'Adv', 'Adj', 'geometric')
-coca_SWN.to_csv('geometric_coca_SWN_full.csv')
-coca_SWN[coca_SWN['diff'] > coca_SWN['diff'].quantile()].to_csv('geometric_coca_SWN_50percentile.csv')
+coca_SWN.to_csv('coca_SWN_full.csv')
+coca_SWN[coca_SWN['diff'] > coca_SWN['diff'].quantile()].to_csv('coca_SWN_50percentile.csv')
 
 # CORE data
 
@@ -177,12 +172,8 @@ core_VAD[core_VAD['diff'] > core_VAD['diff'].quantile()].to_csv('core_VAD_50perc
 
 # CORE-SWN data
 core_SWN = oxymoronsBySWN(core_combination, 'Adv', 'Adj', 'harmonic')
-core_SWN.to_csv('harmonic_core_SWN_full.csv')
-core_SWN[core_SWN['diff'] > core_SWN['diff'].quantile()].to_csv('harmonic_core_SWN_50percentile.csv')
-
-core_SWN = oxymoronsBySWN(core_combination, 'Adv', 'Adj', 'geometric')
-core_SWN.to_csv('geometric_core_SWN_full.csv')
-core_SWN[core_SWN['diff'] > core_SWN['diff'].quantile()].to_csv('geometric_core_SWN_50percentile.csv')
+core_SWN.to_csv('core_SWN_full.csv')
+core_SWN[core_SWN['diff'] > core_SWN['diff'].quantile()].to_csv('core_SWN_50percentile.csv')
 
 # TIME
 
@@ -192,15 +183,11 @@ time_raw['adv'] = split[0].str.lower()
 time_raw['adj'] = split[1].str.lower()
 
 # TIME-VAD
-time_VAD = oxymoronsByVAD(time_raw, 'adv', 'adv')
+time_VAD = oxymoronsByVAD(time_raw, 'adv', 'adj')
 time_VAD.to_csv('time_VAD_full.csv')
 time_VAD[time_VAD['diff'] > time_VAD['diff'].quantile()].to_csv('time_VAD_50percentile.csv')
 
 # TIME-SWN
 time_SWN = oxymoronsBySWN(time_raw, 'adv', 'adj', 'harmonic')
-time_SWN.to_csv('harmonic_time_SWN_full.csv')
-time_SWN[time_SWN['diff'] > time_SWN['diff'].quantile()].to_csv('harmonic_time_SWN_50percentile.csv')
-
-time_SWN = oxymoronsBySWN(time_raw, 'adv', 'adj', 'geometric')
-time_SWN.to_csv('geometric_time_SWN_full.csv')
-time_SWN[time_SWN['diff'] > time_SWN['diff'].quantile()].to_csv('geometric_time_SWN_50percentile.csv')
+time_SWN.to_csv('time_SWN_full.csv')
+time_SWN[time_SWN['diff'] > time_SWN['diff'].quantile()].to_csv('time_SWN_50percentile.csv')
