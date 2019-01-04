@@ -1,2 +1,0 @@
-Frequency: 134
-Filename: test.csv
